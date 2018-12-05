@@ -3,3 +3,69 @@
     <script type="text/javascript">
         var MAP = new L.Storage.Map("map", {{ map_settings|notag|safe }});
     </script>
+
+    <script>
+//       window.addEventListener('DOMContentLoaded', function() {
+//           setTimeout(customizeHandlers, 3000);	// I cannot hide layer before it is loaded plus I have to wait for show and hide buttons to load to have propery buttons.length
+//      }, true);
+
+	function customizeHandlers(){
+
+		// close all layers
+		var buttons = document.querySelectorAll('.layer-toggle');
+		var openers = buttons.length / 2;
+		for(var i = 0; i < openers; i++) {
+			buttons[i].click();
+		}
+
+		// set toggling of layer for whole divs and spans inside them
+
+		var divs = document.querySelectorAll('.storage-browse-features > div');
+
+                for(i = 0; i < divs.length; i++) {
+                    divs[i].addEventListener('click', function(e) {
+			var toggler = e.target.querySelector('.layer-toggle');
+			if(toggler)
+			    toggler.click();
+		    }, false);
+                };
+
+		var spans = document.querySelectorAll('.storage-browse-features div h5 span');
+
+                for(i = 0; i < spans.length; i++) {
+                    spans[i].addEventListener('click', function(e) {
+                        var toggler = e.target.parentNode.querySelector('.layer-toggle');
+                        if(toggler)
+                            toggler.click();
+                    }, false);
+                }
+
+                // find all markers (i elements) in layer and their color in layer list
+                var is = document.querySelectorAll('i.feature-color');
+
+               for(i = 0; i < is.length; i++) {
+                    is[i].parentElement.parentElement.parentElement.firstChild.style.backgroundColor = is[i].style.backgroundColor;
+                }
+
+                // add close all layers button
+                var toolbox = document.body.querySelector('#storage-ui-container .toolbox');
+                var closerSpan = document.createElement('span');
+                closerSpan.innerText = 'Zavřít všechny vrstvy';
+                closerSpan.classList.add('close-all');
+                document.querySelector('#storage-ui-container').insertBefore(closerSpan, toolbox);
+
+                closerSpan.addEventListener('click', function(e){
+                    var closableLayerButtons = document.querySelectorAll('.storage-browse-features > div:not(.off) .layer-toggle');
+
+                    for(i = 0; i < closableLayerButtons.length; i++){
+                        closableLayerButtons[i].click();
+                    }
+
+                });
+
+		document.getElementById('storage-ui-container').insertAdjacentHTML('beforeend',
+                   '<div id="credits">Sestaveno z Leaflet a Django, propojených pomocí projektu uMap.<br>Vyrobila TAH reklamní agentura s.r.o. 2018<br><a href="http://www.tvorba-map.cz" target="_blank">www.tvorba-map.cz</a></div>'
+  		)
+	}
+
+    </script>
